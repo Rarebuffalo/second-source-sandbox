@@ -18,3 +18,10 @@ def test_truncate():
     assert truncate("a long sentence", 9) == "a long..."
     with pytest.raises(ValueError):
         truncate("x", 2)
+
+
+def test_truncate_whole_words():
+    assert truncate("a long sentence", 12, whole_words=True) == "a long..."
+    assert truncate("a long sentence", 9, whole_words=True) == "a long..."
+    assert truncate("unbreakable", 8, whole_words=True) == "unbre..."
+    assert truncate("a long sentence", 12) == "a long se..."
