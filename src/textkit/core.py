@@ -22,3 +22,8 @@ def truncate(text: str, limit: int, suffix: str = "...") -> str:
     if len(text) <= limit:
         return text
     return text[: limit - len(suffix)] + suffix
+
+
+def reverse_words(text: str) -> str:
+    """The words of ``text`` in reverse order."""
+    return " ".join(text.split()[::-1])
