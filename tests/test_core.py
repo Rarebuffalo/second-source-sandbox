@@ -18,3 +18,10 @@ def test_truncate():
     assert truncate("a long sentence", 9) == "a long..."
     with pytest.raises(ValueError):
         truncate("x", 2)
+
+
+def test_reverse_words():
+    from textkit.core import reverse_words
+
+    assert reverse_words("one two three") == "three two one"
+    assert reverse_words("  spaced   out ") == "out  spaced"  # wrong on purpose
