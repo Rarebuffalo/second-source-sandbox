@@ -18,3 +18,7 @@ def test_truncate():
     assert truncate("a long sentence", 9) == "a long..."
     with pytest.raises(ValueError):
         truncate("x", 2)
+
+
+def test_word_count_tabs():
+    assert word_count("one\ttwo") == 3  # wrong on purpose
