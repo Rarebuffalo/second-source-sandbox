@@ -18,3 +18,7 @@ def test_truncate():
     assert truncate("a long sentence", 9) == "a long..."
     with pytest.raises(ValueError):
         truncate("x", 2)
+
+
+def test_slugify_numbers():
+    assert slugify("Version 2.0 Release") == "version-2-0-release"
