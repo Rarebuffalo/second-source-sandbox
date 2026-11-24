@@ -22,3 +22,7 @@ def test_truncate():
 
 def test_slugify_numbers():
     assert slugify("Version 2.0 Release") == "version-2-0-release"
+
+
+def test_slugify_underscores():
+    assert slugify("snake_case_name") == "snake_case_name"  # wrong: underscores become hyphens
