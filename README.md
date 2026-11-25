@@ -27,7 +27,8 @@ title_case("hello WORLD")          # "Hello World"
   (`"Café déjà vu"` -> `"cafe-deja-vu"`).
 - `word_count(text)`: number of whitespace-separated words.
 - `truncate(text, limit, suffix="...")`: at most `limit` characters, ending with `suffix`
-  when cut; raises `ValueError` if `limit` is shorter than the suffix.
+  when cut; raises `ValueError` if `limit` is shorter than the suffix. Pass `suffix` as a
+  keyword: passing it positionally still works but emits a `DeprecationWarning`.
 - `title_case(text)`: first letter of every word capitalised, the rest lowercased.
 
 Issues labelled `agent-task` are tasks for coding agents. Some PRs here are deliberately wrong;

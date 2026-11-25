@@ -2,8 +2,12 @@
 
 import re
 import unicodedata
+import warnings
 
 _NON_WORD = re.compile(r"[^a-z0-9]+")
+
+# Marks "argument not given", so an explicit value can be told apart from the default.
+_UNSET: object = object()
 
 
 def _to_ascii(text: str) -> str:
@@ -27,11 +31,32 @@ def word_count(text: str) -> int:
     return sum(1 for token in text.split() if any(ch.isalnum() for ch in token))
 
 
-def truncate(text: str, limit: int, suffix: str = "...", *, whole_words: bool = False) -> str:
+def truncate(
+    text: str,
+    limit: int,
+    _positional_suffix: str = _UNSET,  # type: ignore[assignment]
+    /,
+    *,
+    suffix: str = _UNSET,  # type: ignore[assignment]
+    whole_words: bool = False,
+) -> str:
     """Cut ``text`` to at most ``limit`` characters, ending with ``suffix`` when cut.
 
     With ``whole_words``, never cut a word in half: cut at the last space that fits.
+
+    Passing ``suffix`` positionally is deprecated; use ``suffix=`` instead.
     """
+    if _positional_suffix is not _UNSET:
+        if suffix is not _UNSET:
+            raise TypeError("truncate() got multiple values for argument 'suffix'")
+        warnings.warn(
+            "passing suffix positionally to truncate() is deprecated; use suffix=... instead",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        suffix = _positional_suffix
+    elif suffix is _UNSET:
+        suffix = "..."
     if limit < len(suffix):
         raise ValueError("limit is shorter than the suffix")
     if len(text) <= limit:
