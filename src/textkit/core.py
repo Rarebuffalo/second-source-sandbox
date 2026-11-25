@@ -1,5 +1,6 @@
 """Core text helpers."""
 
+import locale
 import re
 import unicodedata
 
@@ -52,3 +53,17 @@ def title_case(text: str) -> str:
     apostrophes don't start a new word: "don't" -> "Don't".
     """
     return re.sub(r"\S+", lambda m: m.group()[0].upper() + m.group()[1:].lower(), text)
+
+
+def format_number(n: int) -> str:
+    """Format the integer ``n`` with thousands separators, as the current locale does: 1234567 -> "1,234,567".
+
+    Uses the process's ``LC_NUMERIC`` locale, so call ``locale.setlocale(locale.LC_ALL, "")`` once at
+    startup to follow the user's locale (a German locale gives "1.234.567"). Python starts in the "C"
+    locale, which has no grouping; then this falls back to English commas.
+    """
+    if isinstance(n, bool) or not isinstance(n, int):
+        raise TypeError("n must be an integer")
+    if not locale.localeconv()["grouping"]:
+        return f"{n:,}"
+    return locale.format_string("%d", n, grouping=True)
