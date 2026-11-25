@@ -2,6 +2,7 @@
 
 import re
 import unicodedata
+from itertools import batched
 
 _NON_WORD = re.compile(r"[^a-z0-9]+")
 
@@ -52,3 +53,19 @@ def title_case(text: str) -> str:
     apostrophes don't start a new word: "don't" -> "Don't".
     """
     return re.sub(r"\S+", lambda m: m.group()[0].upper() + m.group()[1:].lower(), text)
+
+
+def chunk_words(text: str, n: int, *, strict: bool = False) -> list[list[str]]:
+    """Split the whitespace-separated words of ``text`` into lists of ``n`` words.
+
+    "a b c d e", 2 -> [["a", "b"], ["c", "d"], ["e"]]. The last chunk may be shorter;
+    with ``strict``, an incomplete last chunk raises ``ValueError`` instead.
+    Raises ``ValueError`` if ``n`` is less than 1.
+    """
+    if n < 1:
+        raise ValueError("n must be at least 1")
+    # batched() only takes strict= from Python 3.13, so check the last chunk ourselves.
+    chunks = [list(chunk) for chunk in batched(text.split(), n)]
+    if strict and chunks and len(chunks[-1]) != n:
+        raise ValueError(f"incomplete last chunk: {len(chunks[-1])} of {n} words")
+    return chunks

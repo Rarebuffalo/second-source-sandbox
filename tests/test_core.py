@@ -1,6 +1,6 @@
 import pytest
 
-from textkit import slugify, title_case, truncate, word_count
+from textkit import chunk_words, slugify, title_case, truncate, word_count
 
 
 def test_slugify():
@@ -44,3 +44,24 @@ def test_title_case():
     assert title_case("  keeps   spacing ") == "  Keeps   Spacing "
     assert title_case("don't panic") == "Don't Panic"
     assert title_case("") == ""
+
+
+def test_chunk_words():
+    assert chunk_words("a b c d e", 2) == [["a", "b"], ["c", "d"], ["e"]]
+    assert chunk_words("a b c d", 2) == [["a", "b"], ["c", "d"]]
+    assert chunk_words("  a\tb\n c ", 5) == [["a", "b", "c"]]
+    assert chunk_words("", 3) == []
+
+
+def test_chunk_words_strict():
+    assert chunk_words("a b c d", 2, strict=True) == [["a", "b"], ["c", "d"]]
+    assert chunk_words("", 2, strict=True) == []
+    with pytest.raises(ValueError):
+        chunk_words("a b c", 2, strict=True)
+
+
+def test_chunk_words_rejects_n_below_one():
+    with pytest.raises(ValueError):
+        chunk_words("a b", 0)
+    with pytest.raises(ValueError):
+        chunk_words("", -1)
