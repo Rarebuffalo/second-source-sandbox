@@ -40,3 +40,12 @@ def truncate(text: str, limit: int, suffix: str = "...", *, whole_words: bool = 
             cut = cut[: cut.rfind(" ")]
         cut = cut.rstrip()
     return cut + suffix
+
+
+def title_case(text: str) -> str:
+    """Capitalise the first letter of every word and lowercase the rest: "hello WORLD" -> "Hello World".
+
+    Words are whitespace-separated, and the whitespace is kept as is. Unlike ``str.title``,
+    apostrophes don't start a new word: "don't" -> "Don't".
+    """
+    return re.sub(r"\S+", lambda m: m.group()[0].upper() + m.group()[1:].lower(), text)
