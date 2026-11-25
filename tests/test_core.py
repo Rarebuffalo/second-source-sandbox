@@ -13,6 +13,29 @@ def test_slugify_transliterates_accents():
     assert slugify("Crème Brûlée") == "creme-brulee"
 
 
+def test_slugify_separator():
+    assert slugify("Hello, World!", separator="_") == "hello_world"
+    assert slugify("a b c", separator="--") == "a--b--c"
+    assert slugify("  ", separator="_") == ""
+
+
+def test_slugify_max_length():
+    assert slugify("hello world again", max_length=11) == "hello-world"
+    assert slugify("hello world again", max_length=12) == "hello-world"
+    assert slugify("hello world again", max_length=16) == "hello-world"
+    assert slugify("hello world again", max_length=17) == "hello-world-again"
+    assert slugify("hello world", max_length=100) == "hello-world"
+    assert slugify("hello world", max_length=6) == "hello"
+    assert slugify("a b c", max_length=3, separator="__") == "a"
+    assert slugify("", max_length=5) == ""
+
+
+def test_slugify_max_length_first_word_too_long():
+    assert slugify("unbreakable word", max_length=5) == "unbre"
+    with pytest.raises(ValueError):
+        slugify("x", max_length=0)
+
+
 def test_word_count():
     assert word_count("one two  three") == 3
     assert word_count("") == 0
