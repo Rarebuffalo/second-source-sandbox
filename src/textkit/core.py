@@ -1,13 +1,22 @@
 """Core text helpers."""
 
 import re
+import unicodedata
 
 _NON_WORD = re.compile(r"[^a-z0-9]+")
 
 
+def _to_ascii(text: str) -> str:
+    """Strip accents: decompose each letter (NFKD) and drop what is not ASCII ("é" -> "e")."""
+    return unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+
+
 def slugify(text: str) -> str:
-    """Lowercase ``text`` and join its words with hyphens: "Hello, World!" -> "hello-world"."""
-    return _NON_WORD.sub("-", text.lower()).strip("-")
+    """Lowercase ``text`` and join its words with hyphens: "Hello, World!" -> "hello-world".
+
+    Accented letters are transliterated first: "Café déjà vu" -> "cafe-deja-vu".
+    """
+    return _NON_WORD.sub("-", _to_ascii(text).lower()).strip("-")
 
 
 def word_count(text: str) -> int:
