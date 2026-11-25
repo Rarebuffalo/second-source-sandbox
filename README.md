@@ -15,12 +15,14 @@ ruff check .
 ## Usage
 
 ```python
-from textkit import slugify, title_case, truncate, word_count
+from textkit import camel_to_snake, slugify, snake_to_camel, title_case, truncate, word_count
 
 slugify("Hello, World!")          # "hello-world"
 word_count("one two  three")       # 3
 truncate("a long sentence", 9)     # "a long..."
 title_case("hello WORLD")          # "Hello World"
+camel_to_snake("parseHTTPResponse")  # "parse_http_response"
+snake_to_camel("parse_http_response")  # "parseHttpResponse"
 ```
 
 - `slugify(text)`: lowercase words joined with hyphens; accents are stripped first
@@ -29,6 +31,9 @@ title_case("hello WORLD")          # "Hello World"
 - `truncate(text, limit, suffix="...")`: at most `limit` characters, ending with `suffix`
   when cut; raises `ValueError` if `limit` is shorter than the suffix.
 - `title_case(text)`: first letter of every word capitalised, the rest lowercased.
+- `camel_to_snake(text)` / `snake_to_camel(text)`: convert between `camelCase` and `snake_case`.
+  Acronyms stay together, digits stick to the preceding word (`"version2Update"` <->
+  `"version2_update"`), and leading/trailing underscores are kept.
 
 Issues labelled `agent-task` are tasks for coding agents. Some PRs here are deliberately wrong;
 that is the point.

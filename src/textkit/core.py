@@ -52,3 +52,29 @@ def title_case(text: str) -> str:
     apostrophes don't start a new word: "don't" -> "Don't".
     """
     return re.sub(r"\S+", lambda m: m.group()[0].upper() + m.group()[1:].lower(), text)
+
+
+def camel_to_snake(text: str) -> str:
+    """Convert camelCase / PascalCase to snake_case: "parseHTTPResponse" -> "parse_http_response".
+
+    Acronyms stay together ("HTTPServer" -> "http_server") and digits stick to the word before
+    them ("version2Update" -> "version2_update"). Leading and trailing underscores are kept
+    ("_privateName" -> "_private_name"), and text that is already snake_case is left as is.
+    """
+    text = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", text)
+    text = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", text)
+    return text.lower()
+
+
+def snake_to_camel(text: str) -> str:
+    """Convert snake_case to lowerCamelCase: "parse_http_response" -> "parseHttpResponse".
+
+    Digits stay with their word ("version2_update" -> "version2Update"). Leading and trailing
+    underscores are kept ("_private_name" -> "_privateName"); repeated ones inside are collapsed.
+    """
+    core = text.strip("_")
+    lead = text[: len(text) - len(text.lstrip("_"))]
+    trail = text[len(text.rstrip("_")) :] if core else ""
+    first, *rest = [w for w in core.split("_") if w] or [""]
+    camel = first.lower() + "".join(w[0].upper() + w[1:].lower() for w in rest)
+    return lead + camel + trail
