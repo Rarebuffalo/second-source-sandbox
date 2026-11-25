@@ -24,6 +24,20 @@ def test_word_count_ignores_punctuation_only_tokens():
     assert word_count("v2 is 3.5 ok") == 4
 
 
+def test_word_count_unicode_edge_cases():
+    # Same rules as str.split() and str.isalnum(): underscores and combining marks alone don't count,
+    # other scripts and numerals do, and Unicode whitespace separates tokens.
+    assert word_count("_ __ \u0301") == 0
+    assert word_count("caf\u00e9 \u4e2d\u6587 \u00bd \u00b2 x_y") == 5
+    assert word_count("a\u3000b\xa0c\x1cd\u2003e") == 5
+    assert word_count("!!!a !!! a!!!") == 2
+
+
+def test_word_count_huge_input():
+    assert word_count("hello , world " * 200_000) == 400_000
+    assert word_count("!" * 1_000_000 + "a") == 1
+
+
 def test_truncate():
     assert truncate("short", 10) == "short"
     assert truncate("a long sentence", 9) == "a long..."
