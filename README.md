@@ -29,4 +29,4 @@ truncate("a long sentence", 9)     # "a long..."
   when cut; raises `ValueError` if `limit` is shorter than the suffix.
 
 Issues labelled `agent-task` are tasks for coding agents. Some PRs here are deliberately wrong;
-that is the point.
+that is the point of the testbed.
