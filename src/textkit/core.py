@@ -52,3 +52,30 @@ def title_case(text: str) -> str:
     apostrophes don't start a new word: "don't" -> "Don't".
     """
     return re.sub(r"\S+", lambda m: m.group()[0].upper() + m.group()[1:].lower(), text)
+
+
+def wrap(text: str, width: int) -> list[str]:
+    """Break ``text`` into lines of at most ``width`` characters, at spaces.
+
+    "a b c" at width 3 -> ["a b", "c"].
+
+    Runs of whitespace collapse to one space. A single word longer than ``width`` is split
+    across lines. Blank input gives ``[]``.
+    """
+    if width < 1:
+        raise ValueError("width must be at least 1")
+    lines: list[str] = []
+    current = ""
+    for word in text.split():
+        if current and len(current) + 1 + len(word) <= width:
+            current += " " + word
+            continue
+        if current:
+            lines.append(current)
+        while len(word) > width:
+            lines.append(word[:width])
+            word = word[width:]
+        current = word
+    if current:
+        lines.append(current)
+    return lines
