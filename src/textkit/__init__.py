@@ -1,5 +1,5 @@
 """textkit: tiny text utilities."""
 
-from textkit.core import slugify, title_case, truncate, word_count
+from textkit.core import slugify, strip_emoji, title_case, truncate, word_count
 
-__all__ = ["slugify", "title_case", "truncate", "word_count"]
+__all__ = ["slugify", "strip_emoji", "title_case", "truncate", "word_count"]
