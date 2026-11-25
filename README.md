@@ -15,12 +15,13 @@ ruff check .
 ## Usage
 
 ```python
-from textkit import slugify, title_case, truncate, word_count
+from textkit import format_number, slugify, title_case, truncate, word_count
 
 slugify("Hello, World!")          # "hello-world"
 word_count("one two  three")       # 3
 truncate("a long sentence", 9)     # "a long..."
 title_case("hello WORLD")          # "Hello World"
+format_number(1234567)            # "1,234,567"
 ```
 
 - `slugify(text)`: lowercase words joined with hyphens; accents are stripped first
@@ -29,6 +30,9 @@ title_case("hello WORLD")          # "Hello World"
 - `truncate(text, limit, suffix="...")`: at most `limit` characters, ending with `suffix`
   when cut; raises `ValueError` if `limit` is shorter than the suffix.
 - `title_case(text)`: first letter of every word capitalised, the rest lowercased.
+- `format_number(n)`: integer with thousands separators per the current locale (call
+  `locale.setlocale(locale.LC_ALL, "")` to follow the user's; in the default "C" locale it uses English
+  commas). Raises `TypeError` for non-integers.
 
 Issues labelled `agent-task` are tasks for coding agents. Some PRs here are deliberately wrong;
 that is the point.

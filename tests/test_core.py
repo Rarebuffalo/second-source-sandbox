@@ -1,6 +1,8 @@
+import locale
+
 import pytest
 
-from textkit import slugify, title_case, truncate, word_count
+from textkit import format_number, slugify, title_case, truncate, word_count
 
 
 def test_slugify():
@@ -44,3 +46,24 @@ def test_title_case():
     assert title_case("  keeps   spacing ") == "  Keeps   Spacing "
     assert title_case("don't panic") == "Don't Panic"
     assert title_case("") == ""
+
+
+def test_format_number_default_locale_uses_commas():
+    assert format_number(1234567) == "1,234,567"
+    assert format_number(999) == "999"
+    assert format_number(1000) == "1,000"
+    assert format_number(0) == "0"
+    assert format_number(-1234567) == "-1,234,567"
+
+
+def test_format_number_follows_locale(monkeypatch):
+    conv = {"grouping": [3, 0], "thousands_sep": ".", "decimal_point": ","}
+    monkeypatch.setattr(locale, "localeconv", lambda: conv)
+    assert format_number(1234567) == "1.234.567"
+    assert format_number(-1234567) == "-1.234.567"
+
+
+def test_format_number_rejects_non_integers():
+    for bad in (1.5, "12", True):
+        with pytest.raises(TypeError):
+            format_number(bad)
