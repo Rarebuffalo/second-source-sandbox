@@ -2,6 +2,8 @@
 
 import re
 import unicodedata
+from pathlib import Path
+from urllib.parse import unquote, urlsplit
 
 _NON_WORD = re.compile(r"[^a-z0-9]+")
 
@@ -25,6 +27,21 @@ def word_count(text: str) -> int:
     Tokens made only of punctuation or symbols, such as the lone "," in "hello , world", do not count.
     """
     return sum(1 for token in text.split() if any(ch.isalnum() for ch in token))
+
+
+def words_from_uri(uri: str) -> list[str]:
+    """Read the file at a ``file://`` URI as UTF-8 and return its words.
+
+    Words follow the ``word_count`` rules: whitespace-separated tokens that contain a letter
+    or digit. "file:///tmp/a%20b.txt" points at "/tmp/a b.txt". A URI with another scheme,
+    or one that names a remote host, raises ``ValueError``.
+    """
+    parts = urlsplit(uri)
+    if parts.scheme != "file" or parts.netloc not in ("", "localhost"):
+        raise ValueError(f"not a local file URI: {uri!r}")
+    path = Path(unquote(parts.path))
+    text = path.read_text(encoding="utf-8")
+    return [token for token in text.split() if any(ch.isalnum() for ch in token)]
 
 
 def truncate(text: str, limit: int, suffix: str = "...", *, whole_words: bool = False) -> str:
