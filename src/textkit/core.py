@@ -2,8 +2,12 @@
 
 import re
 import unicodedata
+from datetime import timedelta
 
 _NON_WORD = re.compile(r"[^a-z0-9]+")
+_DURATION = re.compile(r"(?:[0-9]+[dhms])+")
+_DURATION_PART = re.compile(r"([0-9]+)([dhms])")
+_DURATION_UNITS = {"d": "days", "h": "hours", "m": "minutes", "s": "seconds"}
 
 
 def _to_ascii(text: str) -> str:
@@ -52,3 +56,19 @@ def title_case(text: str) -> str:
     apostrophes don't start a new word: "don't" -> "Don't".
     """
     return re.sub(r"\S+", lambda m: m.group()[0].upper() + m.group()[1:].lower(), text)
+
+
+def parse_duration(text: str) -> timedelta:
+    """Parse a duration such as "1h30m" into a ``timedelta``: "1d2h3m4s" -> 1 day, 2:03:04.
+
+    Units are d (days), h (hours), m (minutes) and s (seconds), each preceded by a whole number,
+    in any combination and order. Anything else (empty text, spaces, other units, bare numbers)
+    raises ``ValueError``.
+    """
+    if not _DURATION.fullmatch(text):
+        raise ValueError(f"invalid duration: {text!r}")
+    totals: dict[str, int] = {}
+    for number, unit in _DURATION_PART.findall(text):
+        name = _DURATION_UNITS[unit]
+        totals[name] = totals.get(name, 0) + int(number)
+    return timedelta(**totals)

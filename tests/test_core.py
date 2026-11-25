@@ -1,6 +1,8 @@
+from datetime import timedelta
+
 import pytest
 
-from textkit import slugify, title_case, truncate, word_count
+from textkit import parse_duration, slugify, title_case, truncate, word_count
 
 
 def test_slugify():
@@ -44,3 +46,18 @@ def test_title_case():
     assert title_case("  keeps   spacing ") == "  Keeps   Spacing "
     assert title_case("don't panic") == "Don't Panic"
     assert title_case("") == ""
+
+
+def test_parse_duration():
+    assert parse_duration("1h30m") == timedelta(hours=1, minutes=30)
+    assert parse_duration("90s") == timedelta(seconds=90)
+    assert parse_duration("2d") == timedelta(days=2)
+    assert parse_duration("1d2h3m4s") == timedelta(days=1, hours=2, minutes=3, seconds=4)
+    assert parse_duration("30m1h") == timedelta(hours=1, minutes=30)
+    assert parse_duration("0s") == timedelta(0)
+
+
+@pytest.mark.parametrize("bad", ["", "1", "h", "1w", "1h 30m", " 1h", "1.5h", "-1h", "1H", "1h30", "abc", "١h"])
+def test_parse_duration_rejects_invalid(bad):
+    with pytest.raises(ValueError):
+        parse_duration(bad)
