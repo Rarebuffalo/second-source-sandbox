@@ -1,6 +1,6 @@
 import pytest
 
-from textkit import slugify, title_case, truncate, word_count
+from textkit import camel_to_snake, slugify, snake_to_camel, title_case, truncate, word_count
 
 
 def test_slugify():
@@ -44,3 +44,45 @@ def test_title_case():
     assert title_case("  keeps   spacing ") == "  Keeps   Spacing "
     assert title_case("don't panic") == "Don't Panic"
     assert title_case("") == ""
+
+
+def test_camel_to_snake():
+    assert camel_to_snake("parseHTTPResponse") == "parse_http_response"
+    assert camel_to_snake("camelCase") == "camel_case"
+    assert camel_to_snake("PascalCase") == "pascal_case"
+    assert camel_to_snake("HTTPServer") == "http_server"
+    assert camel_to_snake("getHTTP") == "get_http"
+    assert camel_to_snake("already_snake") == "already_snake"
+    assert camel_to_snake("word") == "word"
+    assert camel_to_snake("") == ""
+
+
+def test_camel_to_snake_digits():
+    assert camel_to_snake("version2Update") == "version2_update"
+    assert camel_to_snake("utf8Decode") == "utf8_decode"
+
+
+def test_camel_to_snake_underscores():
+    assert camel_to_snake("_privateName") == "_private_name"
+    assert camel_to_snake("__dunderName__") == "__dunder_name__"
+    assert camel_to_snake("trailingName_") == "trailing_name_"
+
+
+def test_snake_to_camel():
+    assert snake_to_camel("parse_http_response") == "parseHttpResponse"
+    assert snake_to_camel("camel_case") == "camelCase"
+    assert snake_to_camel("word") == "word"
+    assert snake_to_camel("") == ""
+
+
+def test_snake_to_camel_digits():
+    assert snake_to_camel("version2_update") == "version2Update"
+    assert snake_to_camel("utf_8_decode") == "utf8Decode"
+
+
+def test_snake_to_camel_underscores():
+    assert snake_to_camel("_private_name") == "_privateName"
+    assert snake_to_camel("__dunder_name__") == "__dunderName__"
+    assert snake_to_camel("trailing_name_") == "trailingName_"
+    assert snake_to_camel("double__under") == "doubleUnder"
+    assert snake_to_camel("___") == "___"
