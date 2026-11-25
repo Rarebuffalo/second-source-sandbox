@@ -31,6 +31,22 @@ def test_truncate():
         truncate("x", 2)
 
 
+def test_truncate_positional_suffix_is_deprecated():
+    with pytest.warns(DeprecationWarning, match="suffix"):
+        assert truncate("a long sentence", 9, "~") == "a long s~"
+
+
+def test_truncate_keyword_suffix_is_silent(recwarn):
+    assert truncate("a long sentence", 9, suffix="~") == "a long s~"
+    assert truncate("a long sentence", 9) == "a long..."
+    assert not [w for w in recwarn if issubclass(w.category, DeprecationWarning)]
+
+
+def test_truncate_suffix_given_twice_is_an_error():
+    with pytest.raises(TypeError, match="multiple values"):
+        truncate("a long sentence", 9, "~", suffix="~")
+
+
 def test_truncate_whole_words():
     assert truncate("a long sentence", 12, whole_words=True) == "a long..."
     assert truncate("a long sentence", 9, whole_words=True) == "a long..."
