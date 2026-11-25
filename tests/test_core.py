@@ -18,6 +18,12 @@ def test_word_count():
     assert word_count("") == 0
 
 
+def test_word_count_ignores_punctuation_only_tokens():
+    assert word_count("hello , world") == 2
+    assert word_count("- -- ... !") == 0
+    assert word_count("v2 is 3.5 ok") == 4
+
+
 def test_truncate():
     assert truncate("short", 10) == "short"
     assert truncate("a long sentence", 9) == "a long..."
