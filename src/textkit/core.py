@@ -2,6 +2,7 @@
 
 import re
 import unicodedata
+from datetime import datetime, timedelta
 
 _NON_WORD = re.compile(r"[^a-z0-9]+")
 
@@ -43,6 +44,30 @@ def truncate(text: str, limit: int, suffix: str = "...", *, whole_words: bool = 
             cut = cut[: cut.rfind(" ")]
         cut = cut.rstrip()
     return cut + suffix
+
+
+def relative_time(dt: datetime, now: datetime | None = None) -> str:
+    """Describe how long ago ``dt`` was: "just now", "5 minutes ago", "3 hours ago",
+    "yesterday", "4 days ago".
+
+    ``now`` defaults to the current time in ``dt``'s timezone, so naive and aware datetimes
+    both work as long as ``now`` (when given) matches ``dt``. A time in the future counts as
+    "just now".
+    """
+    if now is None:
+        now = datetime.now(dt.tzinfo)
+    elapsed = now - dt
+    if elapsed < timedelta(minutes=1):
+        return "just now"
+    if elapsed < timedelta(hours=1):
+        minutes = int(elapsed.total_seconds() // 60)
+        return f"{minutes} minute{'s' if minutes != 1 else ''} ago"
+    if elapsed < timedelta(days=1):
+        hours = int(elapsed.total_seconds() // 3600)
+        return f"{hours} hour{'s' if hours != 1 else ''} ago"
+    if elapsed < timedelta(days=2):
+        return "yesterday"
+    return f"{elapsed.days} days ago"
 
 
 def title_case(text: str) -> str:
