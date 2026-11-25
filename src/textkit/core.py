@@ -11,8 +11,11 @@ def slugify(text: str) -> str:
 
 
 def word_count(text: str) -> int:
-    """Number of whitespace-separated words."""
-    return len(text.split())
+    """Number of whitespace-separated tokens that contain a letter or digit.
+
+    Tokens made only of punctuation or symbols, such as the lone "," in "hello , world", do not count.
+    """
+    return sum(1 for token in text.split() if any(ch.isalnum() for ch in token))
 
 
 def truncate(text: str, limit: int, suffix: str = "...", *, whole_words: bool = False) -> str:
