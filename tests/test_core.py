@@ -44,3 +44,13 @@ def test_title_case():
     assert title_case("  keeps   spacing ") == "  Keeps   Spacing "
     assert title_case("don't panic") == "Don't Panic"
     assert title_case("") == ""
+
+
+def test_slugify_is_fast():
+    import timeit
+
+    titles = ["Hello, World!", "The Quick Brown Fox Jumps Over the Lazy Dog", "Café déjà vu: A Guide to Résumé Writing"]
+    batch = (titles * 3334)[:10_000]
+    # Best of a few runs, so a noisy CI neighbour doesn't fail the build.
+    best = min(timeit.repeat(lambda: [slugify(t) for t in batch], number=1, repeat=5))
+    assert best < 0.050, f"10,000 slugify calls took {best * 1000:.1f} ms"

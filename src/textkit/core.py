@@ -16,7 +16,9 @@ def slugify(text: str) -> str:
 
     Accented letters are transliterated first: "Café déjà vu" -> "cafe-deja-vu".
     """
-    return _NON_WORD.sub("-", _to_ascii(text).lower()).strip("-")
+    if not text.isascii():  # NFKD is the identity on ASCII, so only other text needs transliterating
+        text = _to_ascii(text)
+    return _NON_WORD.sub("-", text.lower()).strip("-")
 
 
 def word_count(text: str) -> int:
