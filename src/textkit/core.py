@@ -11,12 +11,29 @@ def _to_ascii(text: str) -> str:
     return unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
 
 
-def slugify(text: str) -> str:
-    """Lowercase ``text`` and join its words with hyphens: "Hello, World!" -> "hello-world".
+def slugify(text: str, separator: str = "-", max_length: int | None = None) -> str:
+    """Lowercase ``text`` and join its words with ``separator``: "Hello, World!" -> "hello-world".
 
     Accented letters are transliterated first: "Café déjà vu" -> "cafe-deja-vu".
+
+    With ``max_length``, the slug is at most that many characters long and is cut only between
+    words, so it never ends with the separator. If the first word alone is longer than
+    ``max_length``, that word is cut to fit.
     """
-    return _NON_WORD.sub("-", _to_ascii(text).lower()).strip("-")
+    if max_length is not None and max_length < 1:
+        raise ValueError("max_length must be at least 1")
+    words = [w for w in _NON_WORD.split(_to_ascii(text).lower()) if w]
+    if max_length is None:
+        return separator.join(words)
+    slug = ""
+    for word in words:
+        candidate = word if not slug else slug + separator + word
+        if len(candidate) > max_length:
+            break
+        slug = candidate
+    if not slug and words:
+        slug = words[0][:max_length]
+    return slug
 
 
 def word_count(text: str) -> int:

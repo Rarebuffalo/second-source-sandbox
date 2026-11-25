@@ -23,8 +23,11 @@ truncate("a long sentence", 9)     # "a long..."
 title_case("hello WORLD")          # "Hello World"
 ```
 
-- `slugify(text)`: lowercase words joined with hyphens; accents are stripped first
-  (`"Café déjà vu"` -> `"cafe-deja-vu"`).
+- `slugify(text, separator="-", max_length=None)`: lowercase words joined with `separator`;
+  accents are stripped first (`"Café déjà vu"` -> `"cafe-deja-vu"`). With `max_length`, the slug
+  is cut between words so it never ends with the separator (`slugify("hello world again",
+  max_length=14)` -> `"hello-world"`); a first word longer than `max_length` is cut to fit.
+  Raises `ValueError` if `max_length` is below 1.
 - `word_count(text)`: number of whitespace-separated words.
 - `truncate(text, limit, suffix="...")`: at most `limit` characters, ending with `suffix`
   when cut; raises `ValueError` if `limit` is shorter than the suffix.
