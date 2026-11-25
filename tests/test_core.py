@@ -1,6 +1,6 @@
 import pytest
 
-from textkit import slugify, truncate, word_count
+from textkit import slugify, title_case, truncate, word_count
 
 
 def test_slugify():
@@ -25,3 +25,11 @@ def test_truncate_whole_words():
     assert truncate("a long sentence", 9, whole_words=True) == "a long..."
     assert truncate("unbreakable", 8, whole_words=True) == "unbre..."
     assert truncate("a long sentence", 12) == "a long se..."
+
+
+def test_title_case():
+    assert title_case("hello WORLD") == "Hello World"
+    assert title_case("already Title Case") == "Already Title Case"
+    assert title_case("  keeps   spacing ") == "  Keeps   Spacing "
+    assert title_case("don't panic") == "Don't Panic"
+    assert title_case("") == ""
