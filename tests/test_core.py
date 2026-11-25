@@ -1,6 +1,8 @@
+from pathlib import Path
+
 import pytest
 
-from textkit import slugify, title_case, truncate, word_count
+from textkit import slugify, title_case, truncate, word_count, words_from_uri
 
 
 def test_slugify():
@@ -44,3 +46,57 @@ def test_title_case():
     assert title_case("  keeps   spacing ") == "  Keeps   Spacing "
     assert title_case("don't panic") == "Don't Panic"
     assert title_case("") == ""
+
+
+def test_words_from_uri(tmp_path: Path):
+    f = tmp_path / "notes.txt"
+    f.write_text("Hello, world!\nCafé  -  déjà vu 42\n", encoding="utf-8")
+    assert words_from_uri(f.as_uri()) == ["Hello,", "world!", "Café", "déjà", "vu", "42"]
+
+
+def test_words_from_uri_matches_word_count(tmp_path: Path):
+    text = "one two , three - four 5"
+    f = tmp_path / "count.txt"
+    f.write_text(text, encoding="utf-8")
+    assert len(words_from_uri(f.as_uri())) == word_count(text) == 5
+
+
+def test_words_from_uri_empty_file(tmp_path: Path):
+    f = tmp_path / "empty.txt"
+    f.write_text("", encoding="utf-8")
+    assert words_from_uri(f.as_uri()) == []
+
+
+def test_words_from_uri_percent_encoded_path(tmp_path: Path):
+    f = tmp_path / "my notes.txt"
+    f.write_text("spaced name works", encoding="utf-8")
+    assert words_from_uri("file://" + str(f).replace(" ", "%20")) == [
+        "spaced",
+        "name",
+        "works",
+    ]
+
+
+def test_words_from_uri_localhost_host(tmp_path: Path):
+    f = tmp_path / "local.txt"
+    f.write_text("hi there", encoding="utf-8")
+    assert words_from_uri("file://localhost" + str(f)) == ["hi", "there"]
+
+
+def test_words_from_uri_rejects_other_schemes():
+    with pytest.raises(ValueError):
+        words_from_uri("https://example.com/notes.txt")
+    with pytest.raises(ValueError):
+        words_from_uri("notes.txt")
+
+
+def test_words_from_uri_rejects_remote_host(tmp_path: Path):
+    f = tmp_path / "remote.txt"
+    f.write_text("x", encoding="utf-8")
+    with pytest.raises(ValueError):
+        words_from_uri("file://otherhost" + str(f))
+
+
+def test_words_from_uri_missing_file(tmp_path: Path):
+    with pytest.raises(FileNotFoundError):
+        words_from_uri((tmp_path / "missing.txt").as_uri())

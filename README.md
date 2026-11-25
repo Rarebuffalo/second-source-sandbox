@@ -29,6 +29,8 @@ title_case("hello WORLD")          # "Hello World"
 - `truncate(text, limit, suffix="...")`: at most `limit` characters, ending with `suffix`
   when cut; raises `ValueError` if `limit` is shorter than the suffix.
 - `title_case(text)`: first letter of every word capitalised, the rest lowercased.
+- `words_from_uri(uri)`: reads a `file://` URI as UTF-8 and returns its words (same rules as
+  `word_count`); raises `ValueError` for non-file URIs.
 
 Issues labelled `agent-task` are tasks for coding agents. Some PRs here are deliberately wrong;
 that is the point.
