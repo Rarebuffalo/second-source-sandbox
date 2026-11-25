@@ -39,4 +39,4 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 75
     steps:
-      - uses: Rarebuffalo/second-source@main
+      - uses: Rarebuffalo/second-source@v0
