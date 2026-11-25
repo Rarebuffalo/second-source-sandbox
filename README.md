@@ -22,7 +22,8 @@ word_count("one two  three")       # 3
 truncate("a long sentence", 9)     # "a long..."
 ```
 
-- `slugify(text)`: lowercase words joined with hyphens.
+- `slugify(text)`: lowercase words joined with hyphens; accents are stripped first
+  (`"Café déjà vu"` -> `"cafe-deja-vu"`).
 - `word_count(text)`: number of whitespace-separated words.
 - `truncate(text, limit, suffix="...")`: at most `limit` characters, ending with `suffix`
   when cut; raises `ValueError` if `limit` is shorter than the suffix.

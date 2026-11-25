@@ -8,6 +8,11 @@ def test_slugify():
     assert slugify("  many   spaces  ") == "many-spaces"
 
 
+def test_slugify_transliterates_accents():
+    assert slugify("Café déjà vu") == "cafe-deja-vu"
+    assert slugify("Crème Brûlée") == "creme-brulee"
+
+
 def test_word_count():
     assert word_count("one two  three") == 3
     assert word_count("") == 0
