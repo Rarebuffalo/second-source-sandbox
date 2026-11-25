@@ -44,3 +44,35 @@ def test_title_case():
     assert title_case("  keeps   spacing ") == "  Keeps   Spacing "
     assert title_case("don't panic") == "Don't Panic"
     assert title_case("") == ""
+
+
+def test_truncate_limit_zero():
+    assert truncate("abc", 0, suffix="") == ""
+    assert truncate("", 0, suffix="") == ""
+    assert truncate("abc", 1, suffix="", whole_words=True) == "a"
+    with pytest.raises(ValueError):
+        truncate("abc", 0)
+    with pytest.raises(ValueError):
+        truncate("abc", -1, suffix="")
+
+
+def test_truncate_empty_suffix():
+    assert truncate("a long sentence", 9, suffix="") == "a long se"
+    assert truncate("a long sentence", 9, suffix="", whole_words=True) == "a long"
+    assert truncate("hello world", 8, suffix="", whole_words=True) == "hello"
+
+
+def test_truncate_only_spaces():
+    assert truncate("      ", 6) == "      "
+    assert truncate("      ", 5) == "  ..."
+    assert truncate("      ", 5, whole_words=True) == "..."
+
+
+def test_truncate_whole_words_first_word_too_long():
+    assert truncate("unbreakable word", 8, whole_words=True) == "unbre..."
+    assert truncate(" unbreakable", 8, whole_words=True) == " unbr..."
+
+
+def test_truncate_whole_words_breaks_on_any_whitespace():
+    assert truncate("one\ntwo three", 8, whole_words=True) == "one..."
+    assert truncate("one\ttwo three", 8, whole_words=True) == "one..."
