@@ -30,5 +30,19 @@ title_case("hello WORLD")          # "Hello World"
   when cut; raises `ValueError` if `limit` is shorter than the suffix.
 - `title_case(text)`: first letter of every word capitalised, the rest lowercased.
 
+### Command line
+
+Each function is also a command that prints its result:
+
+```bash
+python -m textkit slugify "Hello World"            # hello-world
+python -m textkit word_count "one two  three"      # 3
+python -m textkit title_case "hello WORLD"         # Hello World
+python -m textkit truncate "a long sentence" 9     # a long...
+python -m textkit truncate "a long sentence" 12 --whole-words --suffix "…"
+```
+
+An unknown or missing command (or a bad argument) exits with status 2 and a short usage message.
+
 Issues labelled `agent-task` are tasks for coding agents. Some PRs here are deliberately wrong;
 that is the point.
