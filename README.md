@@ -29,6 +29,9 @@ title_case("hello WORLD")          # "Hello World"
 - `truncate(text, limit, suffix="...")`: at most `limit` characters, ending with `suffix`
   when cut; raises `ValueError` if `limit` is shorter than the suffix.
 - `title_case(text)`: first letter of every word capitalised, the rest lowercased.
+- `natural_sort_key(text)`: a sort key for human ordering: case-insensitive, with digit runs
+  compared by value, so `sorted(["file10", "file2", "File1"], key=natural_sort_key)` gives
+  `["File1", "file2", "file10"]`.
 
 Issues labelled `agent-task` are tasks for coding agents. Some PRs here are deliberately wrong;
 that is the point.

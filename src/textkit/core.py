@@ -52,3 +52,18 @@ def title_case(text: str) -> str:
     apostrophes don't start a new word: "don't" -> "Don't".
     """
     return re.sub(r"\S+", lambda m: m.group()[0].upper() + m.group()[1:].lower(), text)
+
+
+_DIGIT_RUN = re.compile(r"(\d+)")
+
+
+def natural_sort_key(text: str) -> tuple[str | int, ...]:
+    """Sort key that orders text case-insensitively, with digit runs compared by value.
+
+    Use it as ``sorted(items, key=natural_sort_key)``:
+    ``["file10", "file2", "File1"]`` -> ``["File1", "file2", "file10"]``.
+    """
+    # re.split with a capturing group alternates text and digit pieces, so even
+    # positions are always str and odd positions always int: keys stay comparable.
+    parts = _DIGIT_RUN.split(text.casefold())
+    return tuple(int(part) if i % 2 else part for i, part in enumerate(parts))

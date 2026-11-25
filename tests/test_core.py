@@ -1,6 +1,6 @@
 import pytest
 
-from textkit import slugify, title_case, truncate, word_count
+from textkit import natural_sort_key, slugify, title_case, truncate, word_count
 
 
 def test_slugify():
@@ -44,3 +44,31 @@ def test_title_case():
     assert title_case("  keeps   spacing ") == "  Keeps   Spacing "
     assert title_case("don't panic") == "Don't Panic"
     assert title_case("") == ""
+
+
+def test_natural_sort_key_orders_numbers_by_value():
+    assert sorted(["file10", "file2", "File1"], key=natural_sort_key) == [
+        "File1",
+        "file2",
+        "file10",
+    ]
+
+
+def test_natural_sort_key_is_case_insensitive():
+    assert sorted(["b", "A", "C"], key=natural_sort_key) == ["A", "b", "C"]
+    assert natural_sort_key("Report") == natural_sort_key("report")
+
+
+def test_natural_sort_key_handles_digits_at_start_and_mixed_runs():
+    assert sorted(["10abc", "abc", "2x9", "2x10"], key=natural_sort_key) == [
+        "2x9",
+        "2x10",
+        "10abc",
+        "abc",
+    ]
+    assert sorted(["v1.10", "v1.9", "v2.0"], key=natural_sort_key) == ["v1.9", "v1.10", "v2.0"]
+
+
+def test_natural_sort_key_prefix_sorts_first_and_empty_is_smallest():
+    assert sorted(["file1", "file", "file0"], key=natural_sort_key) == ["file", "file0", "file1"]
+    assert sorted(["a", ""], key=natural_sort_key) == ["", "a"]
