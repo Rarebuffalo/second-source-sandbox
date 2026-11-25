@@ -4,6 +4,9 @@ import re
 import unicodedata
 
 _NON_WORD = re.compile(r"[^a-z0-9]+")
+# One match per token that holds a letter or digit: it starts at the token's first such
+# character ([^\W_] is exactly str.isalnum) and runs to the token's end.
+_COUNTED_TOKEN = re.compile(r"[^\W_]\S*")
 
 
 def _to_ascii(text: str) -> str:
@@ -24,7 +27,7 @@ def word_count(text: str) -> int:
 
     Tokens made only of punctuation or symbols, such as the lone "," in "hello , world", do not count.
     """
-    return sum(1 for token in text.split() if any(ch.isalnum() for ch in token))
+    return sum(1 for _ in _COUNTED_TOKEN.finditer(text))
 
 
 def truncate(text: str, limit: int, suffix: str = "...", *, whole_words: bool = False) -> str:
