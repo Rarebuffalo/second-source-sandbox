@@ -1,6 +1,9 @@
+import datetime
+
 import pytest
 
-from textkit import slugify, title_case, truncate, word_count
+import textkit.core
+from textkit import slugify, title_case, today_slug, truncate, word_count
 
 
 def test_slugify():
@@ -44,3 +47,20 @@ def test_title_case():
     assert title_case("  keeps   spacing ") == "  Keeps   Spacing "
     assert title_case("don't panic") == "Don't Panic"
     assert title_case("") == ""
+
+
+@pytest.fixture
+def frozen_today(monkeypatch):
+    class FrozenDate(datetime.date):
+        @classmethod
+        def today(cls):
+            return cls(2026, 11, 25)
+
+    monkeypatch.setattr(textkit.core, "date", FrozenDate)
+
+
+def test_today_slug(frozen_today):
+    assert today_slug("notes") == "notes-2026-11-25"
+    assert today_slug("Meeting Notes!") == "meeting-notes-2026-11-25"
+    assert today_slug("") == "2026-11-25"
+

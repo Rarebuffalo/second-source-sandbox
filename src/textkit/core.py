@@ -2,6 +2,7 @@
 
 import re
 import unicodedata
+from datetime import date
 
 _NON_WORD = re.compile(r"[^a-z0-9]+")
 
@@ -52,3 +53,14 @@ def title_case(text: str) -> str:
     apostrophes don't start a new word: "don't" -> "Don't".
     """
     return re.sub(r"\S+", lambda m: m.group()[0].upper() + m.group()[1:].lower(), text)
+
+
+def today_slug(prefix: str) -> str:
+    """Slug of ``prefix`` followed by today's local date: "Notes" -> "notes-2026-11-25".
+
+    The date is the local calendar date (``datetime.date.today()``), not UTC. ``prefix`` is
+    slugified first; an empty prefix gives just the date.
+    """
+    stamp = date.today().isoformat()
+    head = slugify(prefix)
+    return f"{head}-{stamp}" if head else stamp
